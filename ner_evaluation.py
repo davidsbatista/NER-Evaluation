@@ -38,7 +38,7 @@ def collect_named_entities(tokens):
 
         elif ent_type != token_tag[2:]:
             end_offset = offset - 1
-            named_entities.append(Entity(ent_type, offset - 1, end_offset))
+            named_entities.append(Entity(ent_type, start_offset, end_offset))
 
             # start of a new entity
             ent_type = token_tag[2:]
