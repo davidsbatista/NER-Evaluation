@@ -119,9 +119,10 @@ def compute_metrics(true_named_entities, pred_named_entities):
                         evaluation['strict']['incorrect'] += 1
                         evaluation['ent_type']['incorrect'] += 1
 
-                        # aggregated by entity type results
-                        evaluation_agg_entities_type[pred.e_type]['strict']['missed'] += 1
-                        evaluation_agg_entities_type[pred.e_type]['ent_type']['spurius'] += 1
+                        # aggregated by entity type results                        
+                        evaluation_agg_entities_type[true.e_type]['strict']['missed'] += 1
+                        evaluation_agg_entities_type[pred.e_type]['strict']['spurius'] += 1
+
 
                         found_overlap = True
                         break
