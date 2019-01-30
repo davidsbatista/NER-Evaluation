@@ -58,6 +58,35 @@ class ner_evaluation(unittest.TestCase):
                                  'possible': 6,
                                  'actual': 6,
                                  'precision': 0.5,
-                                 'recall': 0.5}}
+                                 'recall': 0.5},
+                    'partial': {'correct': 3,
+                                'incorrect': 0,
+                                'partial': 2,
+                                'missed': 1,
+                                'spurius': 1,
+                                'possible': 6,
+                                'actual': 6,
+                                'precision': 0.6666666666666666,
+                                'recall': 0.6666666666666666},
+                    'exact': {'correct': 3,
+                              'incorrect': 2,
+                              'partial': 0,
+                              'missed': 1,
+                              'spurius': 1,
+                              'possible': 6,
+                              'actual': 6,
+                              'precision': 0.5,
+                              'recall': 0.5}
+                    }
+
+        from pprint import pprint
+
+        for k in results:
+            print(k)
+            pprint(results[k])
+            print()
+            pprint(expected[k])
+            print()
+            print("========")
 
         self.assertDictEqual(results, expected)
