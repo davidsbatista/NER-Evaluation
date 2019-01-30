@@ -1,10 +1,8 @@
 from copy import deepcopy
-from collections import namedtuple, defaultdict
-
-from copy import deepcopy
-from collections import namedtuple, defaultdict
+from collections import namedtuple
 
 Entity = namedtuple("Entity", "e_type start_offset end_offset")
+
 
 def collect_named_entities(tokens):
     """
@@ -20,9 +18,7 @@ def collect_named_entities(tokens):
     end_offset = None
     ent_type = None
 
-    for offset, tag in enumerate(tokens):
-
-        token_tag = tag
+    for offset, token_tag in enumerate(tokens):
 
         if token_tag == 'O':
             if ent_type is not None and start_offset is not None:
@@ -36,7 +32,8 @@ def collect_named_entities(tokens):
             ent_type = token_tag[2:]
             start_offset = offset
 
-        elif ent_type != token_tag[2:]:
+        elif ent_type != token_tag[2:] or (ent_type == token_tag[2:] and token_tag[:1] == 'B'):
+
             end_offset = offset - 1
             named_entities.append(Entity(ent_type, start_offset, end_offset))
 
@@ -47,18 +44,18 @@ def collect_named_entities(tokens):
 
     # catches an entity that goes up until the last token
     if ent_type and start_offset and end_offset is None:
-        named_entities.append(Entity(ent_type, start_offset, offset))
+        named_entities.append(Entity(ent_type, start_offset, len(tokens)-1))
 
     return named_entities
 
 
 def compute_metrics(true_named_entities, pred_named_entities):
-
     eval_metrics = {'correct': 0, 'incorrect': 0, 'partial': 0, 'missed': 0, 'spurius': 0}
-    target_tags_no_schema = ['MISC', 'LOC', 'PER', 'LOC', 'ORG']
+    target_tags_no_schema = ['MISC', 'PER', 'LOC', 'ORG']
 
     # overall results
-    evaluation = {'strict': deepcopy(eval_metrics), 'ent_type': deepcopy(eval_metrics)}
+    evaluation = {'strict': deepcopy(eval_metrics),
+                  'ent_type': deepcopy(eval_metrics)}
 
     # results by entity type
     evaluation_agg_entities_type = {e: deepcopy(evaluation) for e in target_tags_no_schema}
@@ -85,7 +82,8 @@ def compute_metrics(true_named_entities, pred_named_entities):
             for true in true_named_entities:
 
                 # check for an exact boundary match but with a different e_type
-                if true.start_offset <= pred.end_offset and pred.start_offset <= true.end_offset and true.e_type != pred.e_type:
+                if true.start_offset == pred.start_offset and pred.end_offset == true.end_offset \
+                        and true.e_type != pred.e_type:
 
                     # overall results
                     evaluation['strict']['incorrect'] += 1
@@ -101,8 +99,10 @@ def compute_metrics(true_named_entities, pred_named_entities):
 
                 # check for an overlap (not exact boundary match) with true entities
                 elif pred.start_offset <= true.end_offset and true.start_offset <= pred.end_offset:
+
                     true_which_overlapped_with_pred.append(true)
                     if pred.e_type == true.e_type:  # overlaps with the same entity type
+
                         # overall results
                         evaluation['strict']['incorrect'] += 1
                         evaluation['ent_type']['correct'] += 1
@@ -115,14 +115,14 @@ def compute_metrics(true_named_entities, pred_named_entities):
                         break
 
                     else:  # overlaps with a different entity type
+
                         # overall results
                         evaluation['strict']['incorrect'] += 1
                         evaluation['ent_type']['incorrect'] += 1
 
-                        # aggregated by entity type results                        
+                        # aggregated by entity type results
                         evaluation_agg_entities_type[true.e_type]['strict']['missed'] += 1
                         evaluation_agg_entities_type[pred.e_type]['strict']['spurius'] += 1
-
 
                         found_overlap = True
                         break
@@ -167,12 +167,8 @@ def compute_metrics(true_named_entities, pred_named_entities):
         actual = evaluation[eval_type]['actual']
         possible = evaluation[eval_type]['possible']
 
-        if eval_type == 'partial_matching':
-            precision = (correct + 0.5 * partial) / actual if actual > 0 else 0
-            recall = (correct + 0.5 * partial) / possible if possible > 0 else 0
-        else:
-            precision = correct / actual if actual > 0 else 0
-            recall = correct / possible if possible > 0 else 0
+        precision = correct / actual if actual > 0 else 0
+        recall = correct / possible if possible > 0 else 0
 
         evaluation[eval_type]['precision'] = precision
         evaluation[eval_type]['recall'] = recall
