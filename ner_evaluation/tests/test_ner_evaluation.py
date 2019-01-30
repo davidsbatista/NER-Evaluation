@@ -79,14 +79,4 @@ class ner_evaluation(unittest.TestCase):
                               'recall': 0.5}
                     }
 
-        from pprint import pprint
-
-        for k in results:
-            print(k)
-            pprint(results[k])
-            print()
-            pprint(expected[k])
-            print()
-            print("========")
-
         self.assertDictEqual(results, expected)
