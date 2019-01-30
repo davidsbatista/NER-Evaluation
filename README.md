@@ -11,4 +11,5 @@ You can find the blog post associated to this code here:
 Run tests and code coverage
 
 `coverage run --rcfile=setup.cfg --source=ner_evaluation/ -m pytest`
+
 `coverage report`
