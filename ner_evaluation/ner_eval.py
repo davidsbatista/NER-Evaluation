@@ -169,6 +169,8 @@ def compute_metrics(true_named_entities, pred_named_entities):
             # for the agg. by e_type
             evaluation_agg_entities_type[true.e_type]['strict']['missed'] += 1
             evaluation_agg_entities_type[true.e_type]['ent_type']['missed'] += 1
+            evaluation_agg_entities_type[true.e_type]['partial']['missed'] += 1
+            evaluation_agg_entities_type[true.e_type]['exact']['missed'] += 1
 
     # Compute 'possible', 'actual', according to SemEval-2013 Task 9.1
     for eval_type in ['strict', 'ent_type', 'partial', 'exact']:
