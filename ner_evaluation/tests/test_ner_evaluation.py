@@ -3,6 +3,7 @@ import unittest
 from ner_evaluation.ner_eval import Entity
 from ner_evaluation.ner_eval import compute_metrics
 from ner_evaluation.ner_eval import collect_named_entities
+from ner_evaluation.ner_eval import find_overlap
 
 
 class ner_evaluation(unittest.TestCase):
@@ -80,3 +81,64 @@ class ner_evaluation(unittest.TestCase):
                     }
 
         self.assertDictEqual(results, expected)
+
+    def test_find_overlap_no_overlap(self):
+
+        pred_entity = Entity('LOC', 1, 10)
+        true_entity = Entity('LOC', 11, 20)
+
+        pred_range = range(pred_entity.start_offset, pred_entity.end_offset)
+        true_range = range(true_entity.start_offset, true_entity.end_offset)
+
+        pred_set = set(pred_range)
+        true_set = set(true_range)
+
+        intersect = find_overlap(pred_set, true_set)
+
+        self.assertFalse(intersect, set())
+
+
+    def test_find_overlap_total_overlap(self):
+
+        pred_entity = Entity('LOC', 10, 22)
+        true_entity = Entity('LOC', 11, 20)
+
+        pred_range = range(pred_entity.start_offset, pred_entity.end_offset)
+        true_range = range(true_entity.start_offset, true_entity.end_offset)
+
+        pred_set = set(pred_range)
+        true_set = set(true_range)
+
+        intersect = find_overlap(pred_set, true_set)
+
+        self.assertTrue(intersect, set())
+
+    def test_find_overlap_start_overlap(self):
+
+        pred_entity = Entity('LOC', 5, 12)
+        true_entity = Entity('LOC', 11, 20)
+
+        pred_range = range(pred_entity.start_offset, pred_entity.end_offset)
+        true_range = range(true_entity.start_offset, true_entity.end_offset)
+
+        pred_set = set(pred_range)
+        true_set = set(true_range)
+
+        intersect = find_overlap(pred_set, true_set)
+
+        self.assertTrue(intersect, set())
+
+    def test_find_overlap_end_overlap(self):
+
+        pred_entity = Entity('LOC', 15, 25)
+        true_entity = Entity('LOC', 11, 20)
+
+        pred_range = range(pred_entity.start_offset, pred_entity.end_offset)
+        true_range = range(true_entity.start_offset, true_entity.end_offset)
+
+        pred_set = set(pred_range)
+        true_set = set(true_range)
+
+        intersect = find_overlap(pred_set, true_set)
+
+        self.assertTrue(intersect, set())
