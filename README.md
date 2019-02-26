@@ -9,6 +9,8 @@ You can find a more detailed explanation in the following blog post:
 * http://www.davidsbatista.net/blog/2018/05/09/Named_Entity_Evaluation/
 
 
+## Example:
+
 You can see a working example on the following notebook:
 
 - [example-full-named-entity-evaluation.ipynb](example-full-named-entity-evaluation.ipynb)
@@ -19,8 +21,7 @@ Note that in order to run that example you need to have installed:
 - nltk
 - sklearn_crfsuite
 
-
-To run tests and see tests code coverage:
+## Test and tests code coverage:
 
 `coverage run --rcfile=setup.cfg --source=ner_evaluation/ -m pytest`
 
