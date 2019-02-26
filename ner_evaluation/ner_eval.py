@@ -85,6 +85,9 @@ def compute_metrics(true_named_entities, pred_named_entities):
             # check for overlaps with any of the true entities
             for true in true_named_entities:
 
+                pred_range = range(pred.start_offset, pred.end_offset)
+                true_range = range(true.start_offset, true.end_offset)
+
                 # 1. check for an exact match but with a different e_type
                 if true.start_offset == pred.start_offset and pred.end_offset == true.end_offset \
                         and true.e_type != pred.e_type:
@@ -104,7 +107,8 @@ def compute_metrics(true_named_entities, pred_named_entities):
                     break
 
                 # 2. check for an overlap i.e. not exact boundary match, with true entities
-                elif pred.start_offset <= true.end_offset and true.start_offset <= pred.end_offset:
+
+                elif find_overlap(true_range, pred_range):
 
                     true_which_overlapped_with_pred.append(true)
 
@@ -194,3 +198,26 @@ def compute_metrics(true_named_entities, pred_named_entities):
         evaluation[eval_type]['recall'] = recall
 
     return evaluation, evaluation_agg_entities_type
+
+
+def find_overlap(true_range, pred_range):
+    """Find the overlap between two ranges
+
+    Find the overalp between two ranges. Return the overlapping values if
+    present, else return an empty set().
+
+    Examples:
+
+    >>> find_overlap((1, 2), (2, 3))
+    2
+    >>> find_overlap((1, 2), (3, 4))
+    set()
+    """
+
+    true_set = set(true_range)
+    pred_set = set(pred_range)
+
+    overlaps = true_set.intersection(pred_set)
+
+    return overlaps
+
