@@ -203,7 +203,7 @@ def compute_metrics(true_named_entities, pred_named_entities):
 def find_overlap(true_range, pred_range):
     """Find the overlap between two ranges
 
-    Find the overalp between two ranges. Return the overlapping values if
+    Find the overlap between two ranges. Return the overlapping values if
     present, else return an empty set().
 
     Examples:

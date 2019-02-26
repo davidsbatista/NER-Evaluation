@@ -97,7 +97,6 @@ class ner_evaluation(unittest.TestCase):
 
         self.assertFalse(intersect, set())
 
-
     def test_find_overlap_total_overlap(self):
 
         pred_entity = Entity('LOC', 10, 22)
