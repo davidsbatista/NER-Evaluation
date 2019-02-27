@@ -84,6 +84,8 @@ def compute_metrics(true_named_entities, pred_named_entities):
             # for the agg. by e_type results
             evaluation_agg_entities_type[pred.e_type]['strict']['correct'] += 1
             evaluation_agg_entities_type[pred.e_type]['ent_type']['correct'] += 1
+            evaluation_agg_entities_type[pred.e_type]['exact']['correct'] += 1
+            evaluation_agg_entities_type[pred.e_type]['partial']['correct'] += 1
 
         else:
 
@@ -106,8 +108,10 @@ def compute_metrics(true_named_entities, pred_named_entities):
                     evaluation['exact']['correct'] += 1
 
                     # aggregated by entity type results
-                    evaluation_agg_entities_type[pred.e_type]['strict']['incorrect'] += 1
-                    evaluation_agg_entities_type[pred.e_type]['ent_type']['incorrect'] += 1
+                    evaluation_agg_entities_type[true.e_type]['strict']['incorrect'] += 1
+                    evaluation_agg_entities_type[true.e_type]['ent_type']['incorrect'] += 1
+                    evaluation_agg_entities_type[true.e_type]['partial']['correct'] += 1
+                    evaluation_agg_entities_type[true.e_type]['exact']['correct'] += 1
 
                     true_which_overlapped_with_pred.append(true)
                     found_overlap = True
@@ -132,8 +136,10 @@ def compute_metrics(true_named_entities, pred_named_entities):
                         evaluation['exact']['incorrect'] += 1
 
                         # aggregated by entity type results
-                        evaluation_agg_entities_type[pred.e_type]['strict']['incorrect'] += 1
-                        evaluation_agg_entities_type[pred.e_type]['ent_type']['correct'] += 1
+                        evaluation_agg_entities_type[true.e_type]['strict']['incorrect'] += 1
+                        evaluation_agg_entities_type[true.e_type]['ent_type']['correct'] += 1
+                        evaluation_agg_entities_type[true.e_type]['partial']['partial'] += 1
+                        evaluation_agg_entities_type[true.e_type]['exact']['incorrect'] += 1
 
                         found_overlap = True
                         break
@@ -149,8 +155,16 @@ def compute_metrics(true_named_entities, pred_named_entities):
                         evaluation['exact']['incorrect'] += 1
 
                         # aggregated by entity type results
-                        evaluation_agg_entities_type[true.e_type]['strict']['missed'] += 1
-                        evaluation_agg_entities_type[pred.e_type]['strict']['spurius'] += 1
+                        # Results against the true entity
+
+                        evaluation_agg_entities_type[true.e_type]['strict']['incorrect'] += 1
+                        evaluation_agg_entities_type[true.e_type]['partial']['partial'] += 1
+                        evaluation_agg_entities_type[true.e_type]['ent_type']['incorrect'] += 1
+                        evaluation_agg_entities_type[true.e_type]['exact']['incorrect'] += 1
+
+                        # Results against the predicted entity
+
+                        # evaluation_agg_entities_type[pred.e_type]['strict']['spurius'] += 1
 
                         found_overlap = True
                         break
@@ -167,6 +181,9 @@ def compute_metrics(true_named_entities, pred_named_entities):
                 # aggregated by entity type results
                 evaluation_agg_entities_type[pred.e_type]['strict']['spurius'] += 1
                 evaluation_agg_entities_type[pred.e_type]['ent_type']['spurius'] += 1
+                evaluation_agg_entities_type[pred.e_type]['partial']['spurius'] += 1
+                evaluation_agg_entities_type[pred.e_type]['exact']['spurius'] += 1
+
     # Scenario III: Entity was missed entirely.
 
     for true in true_named_entities:
