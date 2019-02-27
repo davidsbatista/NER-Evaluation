@@ -50,7 +50,7 @@ def collect_named_entities(tokens):
 
 
 def compute_metrics(true_named_entities, pred_named_entities):
-    eval_metrics = {'correct': 0, 'incorrect': 0, 'partial': 0, 'missed': 0, 'spurius': 0}
+    eval_metrics = {'correct': 0, 'incorrect': 0, 'partial': 0, 'missed': 0, 'spurious': 0}
     target_tags_no_schema = ['MISC', 'PER', 'LOC', 'ORG']
 
     # overall results
@@ -164,25 +164,25 @@ def compute_metrics(true_named_entities, pred_named_entities):
 
                         # Results against the predicted entity
 
-                        # evaluation_agg_entities_type[pred.e_type]['strict']['spurius'] += 1
+                        # evaluation_agg_entities_type[pred.e_type]['strict']['spurious'] += 1
 
                         found_overlap = True
                         break
 
-            # Scenario II: Entities are spurius (i.e., over-generated).
+            # Scenario II: Entities are spurious (i.e., over-generated).
 
             if not found_overlap:
                 # overall results
-                evaluation['strict']['spurius'] += 1
-                evaluation['ent_type']['spurius'] += 1
-                evaluation['partial']['spurius'] += 1
-                evaluation['exact']['spurius'] += 1
+                evaluation['strict']['spurious'] += 1
+                evaluation['ent_type']['spurious'] += 1
+                evaluation['partial']['spurious'] += 1
+                evaluation['exact']['spurious'] += 1
 
                 # aggregated by entity type results
-                evaluation_agg_entities_type[pred.e_type]['strict']['spurius'] += 1
-                evaluation_agg_entities_type[pred.e_type]['ent_type']['spurius'] += 1
-                evaluation_agg_entities_type[pred.e_type]['partial']['spurius'] += 1
-                evaluation_agg_entities_type[pred.e_type]['exact']['spurius'] += 1
+                evaluation_agg_entities_type[pred.e_type]['strict']['spurious'] += 1
+                evaluation_agg_entities_type[pred.e_type]['ent_type']['spurious'] += 1
+                evaluation_agg_entities_type[pred.e_type]['partial']['spurious'] += 1
+                evaluation_agg_entities_type[pred.e_type]['exact']['spurious'] += 1
 
     # Scenario III: Entity was missed entirely.
 
@@ -208,13 +208,13 @@ def compute_metrics(true_named_entities, pred_named_entities):
         incorrect = evaluation[eval_type]['incorrect']
         partial = evaluation[eval_type]['partial']
         missed = evaluation[eval_type]['missed']
-        spurius = evaluation[eval_type]['spurius']
+        spurious = evaluation[eval_type]['spurious']
 
         # possible: nr. annotations in the gold-standard which contribute to the final score
         evaluation[eval_type]['possible'] = correct + incorrect + partial + missed
 
         # actual: number of annotations produced by the NER system
-        evaluation[eval_type]['actual'] = correct + incorrect + partial + spurius
+        evaluation[eval_type]['actual'] = correct + incorrect + partial + spurious
 
         actual = evaluation[eval_type]['actual']
         possible = evaluation[eval_type]['possible']
