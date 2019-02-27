@@ -2,7 +2,7 @@
 
 This repository contains my own implementation of Named-Entity Recognition evaluation metrics as defined by the SemEval 2013 9.1 task.
 
-This metrics go belong a simple token/tag based schema, and consider diferent scenarios based on wether all the tokens that belong to a named entity were classified or not, and also wether the correct type was assigned
+This evaluation metrics go belong a simple token/tag based schema, and consider diferent scenarios based on wether all the tokens that belong to a named entity were classified or not, and also wether the correct entity type was assigned.
 
 You can find a more detailed explanation in the following blog post:
 
