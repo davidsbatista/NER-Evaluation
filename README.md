@@ -21,8 +21,19 @@ Note that in order to run that example you need to have installed:
 - nltk
 - sklearn_crfsuite
 
+For testing you will need:
+
+- pytest
+- coverage
+
+These dependencies can be installed by running `pip3 install -r requirements.txt`
+
 ## Test and tests code coverage:
 
-`coverage run --rcfile=setup.cfg --source=ner_evaluation/ -m pytest`
+To run tests:
+
+`coverage run --rcfile=setup.cfg -m pytest`
+
+To produce a coverage report:
 
 `coverage report`
