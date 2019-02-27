@@ -42,7 +42,7 @@ def test_compute_metrics_case_1():
                            'incorrect': 3,
                            'partial': 0,
                            'missed': 1,
-                           'spurius': 1,
+                           'spurious': 1,
                            'possible': 6,
                            'actual': 6,
                            'precision': 0.3333333333333333,
@@ -51,7 +51,7 @@ def test_compute_metrics_case_1():
                              'incorrect': 2,
                              'partial': 0,
                              'missed': 1,
-                             'spurius': 1,
+                             'spurious': 1,
                              'possible': 6,
                              'actual': 6,
                              'precision': 0.5,
@@ -60,7 +60,7 @@ def test_compute_metrics_case_1():
                             'incorrect': 0,
                             'partial': 2,
                             'missed': 1,
-                            'spurius': 1,
+                            'spurious': 1,
                             'possible': 6,
                             'actual': 6,
                             'precision': 0.6666666666666666,
@@ -69,7 +69,7 @@ def test_compute_metrics_case_1():
                           'incorrect': 2,
                           'partial': 0,
                           'missed': 1,
-                          'spurius': 1,
+                          'spurious': 1,
                           'possible': 6,
                           'actual': 6,
                           'precision': 0.5,
@@ -77,6 +77,328 @@ def test_compute_metrics_case_1():
                 }
 
     assert results == expected
+
+
+def test_compute_metrics_agg_scenario_3():
+
+    true_named_entities = [Entity('PER', 59, 69)]
+
+    pred_named_entities = []
+
+    results, results_agg = compute_metrics(true_named_entities, pred_named_entities)
+
+    expected_agg = {
+        'PER': {
+            'strict': {
+                'correct': 0,
+                'incorrect': 0,
+                'partial': 0,
+                'missed': 1,
+                'spurious': 0
+                },
+            'ent_type': {
+                'correct': 0,
+                'incorrect': 0,
+                'partial': 0,
+                'missed': 1,
+                'spurious': 0
+            },
+            'partial': {
+                'correct': 0,
+                'incorrect': 0,
+                'partial': 0,
+                'missed': 1,
+                'spurious': 0
+            },
+            'exact': {
+                'correct': 0,
+                'incorrect': 0,
+                'partial': 0,
+                'missed': 1,
+                'spurious': 0
+            }
+        }
+    }
+
+    assert results_agg["PER"] == expected_agg["PER"]
+
+
+def test_compute_metrics_agg_scenario_2():
+
+    true_named_entities = []
+
+    pred_named_entities = [Entity('PER', 59, 69)]
+
+    results, results_agg = compute_metrics(true_named_entities, pred_named_entities)
+
+    expected_agg = {
+        'PER': {
+            'strict': {
+                'correct': 0,
+                'incorrect': 0,
+                'partial': 0,
+                'missed': 0,
+                'spurious': 1
+                },
+            'ent_type': {
+                'correct': 0,
+                'incorrect': 0,
+                'partial': 0,
+                'missed': 0,
+                'spurious': 1
+            },
+            'partial': {
+                'correct': 0,
+                'incorrect': 0,
+                'partial': 0,
+                'missed': 0,
+                'spurious': 1
+            },
+            'exact': {
+                'correct': 0,
+                'incorrect': 0,
+                'partial': 0,
+                'missed': 0,
+                'spurious': 1
+            }
+        }
+    }
+
+    assert results_agg["PER"] == expected_agg["PER"]
+
+
+def test_compute_metrics_agg_scenario_5():
+
+    true_named_entities = [Entity('PER', 59, 69)]
+
+    pred_named_entities = [Entity('PER', 57, 69)]
+
+    results, results_agg = compute_metrics(true_named_entities, pred_named_entities)
+
+    expected_agg = {
+        'PER': {
+            'strict': {
+                'correct': 0,
+                'incorrect': 1,
+                'partial': 0,
+                'missed': 0,
+                'spurious': 0
+                },
+            'ent_type': {
+                'correct': 1,
+                'incorrect': 0,
+                'partial': 0,
+                'missed': 0,
+                'spurious': 0
+            },
+            'partial': {
+                'correct': 0,
+                'incorrect': 0,
+                'partial': 1,
+                'missed': 0,
+                'spurious': 0
+            },
+            'exact': {
+                'correct': 0,
+                'incorrect': 1,
+                'partial': 0,
+                'missed': 0,
+                'spurious': 0
+            }
+        }
+    }
+
+    assert results_agg["PER"] == expected_agg["PER"]
+
+def test_compute_metrics_agg_scenario_4():
+
+    true_named_entities = [Entity('PER', 59, 69)]
+
+    pred_named_entities = [Entity('LOC', 59, 69)]
+
+    results, results_agg = compute_metrics(true_named_entities, pred_named_entities)
+
+    expected_agg = {
+        'PER': {
+            'strict': {
+                'correct': 0,
+                'incorrect': 1,
+                'partial': 0,
+                'missed': 0,
+                'spurious': 0
+                },
+            'ent_type': {
+                'correct': 0,
+                'incorrect': 1,
+                'partial': 0,
+                'missed': 0,
+                'spurious': 0
+            },
+            'partial': {
+                'correct': 1,
+                'incorrect': 0,
+                'partial': 0,
+                'missed': 0,
+                'spurious': 0
+            },
+            'exact': {
+                'correct': 1,
+                'incorrect': 0,
+                'partial': 0,
+                'missed': 0,
+                'spurious': 0
+            }
+        },
+        'LOC': {
+            'strict': {
+                'correct': 0,
+                'incorrect': 0,
+                'partial': 0,
+                'missed': 0,
+                'spurious': 0
+                },
+            'ent_type': {
+                'correct': 0,
+                'incorrect': 0,
+                'partial': 0,
+                'missed': 0,
+                'spurious': 0
+            },
+            'partial': {
+                'correct': 0,
+                'incorrect': 0,
+                'partial': 0,
+                'missed': 0,
+                'spurious': 0
+            },
+            'exact': {
+                'correct': 0,
+                'incorrect': 0,
+                'partial': 0,
+                'missed': 0,
+                'spurious': 0
+            }
+        }
+    }
+
+    assert results_agg["PER"] == expected_agg["PER"]
+
+def test_compute_metrics_agg_scenario_1():
+
+    true_named_entities = [Entity('PER', 59, 69)]
+
+    pred_named_entities = [Entity('PER', 59, 69)]
+
+    results, results_agg = compute_metrics(true_named_entities, pred_named_entities)
+
+    expected_agg = {
+        'PER': {
+            'strict': {
+                'correct': 1,
+                'incorrect': 0,
+                'partial': 0,
+                'missed': 0,
+                'spurious': 0
+                },
+            'ent_type': {
+                'correct': 1,
+                'incorrect': 0,
+                'partial': 0,
+                'missed': 0,
+                'spurious': 0
+            },
+            'partial': {
+                'correct': 1,
+                'incorrect': 0,
+                'partial': 0,
+                'missed': 0,
+                'spurious': 0
+            },
+            'exact': {
+                'correct': 1,
+                'incorrect': 0,
+                'partial': 0,
+                'missed': 0,
+                'spurious': 0
+            }
+        }
+    }
+
+    assert results_agg["PER"] == expected_agg["PER"]
+
+def test_compute_metrics_agg_scenario_6():
+
+    true_named_entities = [Entity('PER', 59, 69)]
+
+    pred_named_entities = [Entity('LOC', 54, 69)]
+
+    results, results_agg = compute_metrics(true_named_entities, pred_named_entities)
+
+    expected_agg = {
+        'PER': {
+            'strict': {
+                'correct': 0,
+                'incorrect': 1,
+                'partial': 0,
+                'missed': 0,
+                'spurious': 0
+                },
+            'ent_type': {
+                'correct': 0,
+                'incorrect': 1,
+                'partial': 0,
+                'missed': 0,
+                'spurious': 0
+            },
+            'partial': {
+                'correct': 0,
+                'incorrect': 0,
+                'partial': 1,
+                'missed': 0,
+                'spurious': 0
+            },
+            'exact': {
+                'correct': 0,
+                'incorrect': 1,
+                'partial': 0,
+                'missed': 0,
+                'spurious': 0
+            }
+        },
+        'LOC': {
+            'strict': {
+                'correct': 0,
+                'incorrect': 0,
+                'partial': 0,
+                'missed': 0,
+                'spurious': 0
+                },
+            'ent_type': {
+                'correct': 0,
+                'incorrect': 0,
+                'partial': 0,
+                'missed': 0,
+                'spurious': 0
+            },
+            'partial': {
+                'correct': 0,
+                'incorrect': 0,
+                'partial': 0,
+                'missed': 0,
+                'spurious': 0
+            },
+            'exact': {
+                'correct': 0,
+                'incorrect': 0,
+                'partial': 0,
+                'missed': 0,
+                'spurious': 0
+            }
+        }
+    }
+
+    assert results_agg["PER"] == expected_agg["PER"]
+    assert results_agg["LOC"] == expected_agg["LOC"]
 
 def test_find_overlap_no_overlap():
 
