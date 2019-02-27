@@ -2,6 +2,7 @@ from ner_evaluation.ner_eval import Entity
 from ner_evaluation.ner_eval import compute_metrics
 from ner_evaluation.ner_eval import collect_named_entities
 from ner_evaluation.ner_eval import find_overlap
+from ner_evaluation.ner_eval import compute_actual_possible
 
 
 def test_collect_named_entities_same_type_in_sequence():
@@ -459,3 +460,30 @@ def test_find_overlap_end_overlap():
     intersect = find_overlap(pred_set, true_set)
 
     assert intersect
+
+def test_compute_actual_possible():
+
+    results = {
+        'correct': 6,
+        'incorrect': 3,
+        'partial': 2,
+        'missed': 4,
+        'spurious': 2,
+        }
+
+    expected = {
+        'correct': 6,
+        'incorrect': 3,
+        'partial': 2,
+        'missed': 4,
+        'spurious': 2,
+        'possible': 15,
+        'actual': 13,
+        'precision': 0.46153846153846156, 
+        'recall': 0.4
+    }
+
+    out = compute_actual_possible(results)
+
+    assert out == expected
+

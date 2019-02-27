@@ -203,31 +203,13 @@ def compute_metrics(true_named_entities, pred_named_entities):
             evaluation_agg_entities_type[true.e_type]['exact']['missed'] += 1
 
     # Compute 'possible', 'actual', according to SemEval-2013 Task 9.1
-    for eval_type in ['strict', 'ent_type', 'partial', 'exact']:
-        correct = evaluation[eval_type]['correct']
-        incorrect = evaluation[eval_type]['incorrect']
-        partial = evaluation[eval_type]['partial']
-        missed = evaluation[eval_type]['missed']
-        spurious = evaluation[eval_type]['spurious']
+    for eval_type in ['strict', 'exact']:
+        evaluation = compute_actual_possible(evaluation[eval_type])
 
-        # possible: nr. annotations in the gold-standard which contribute to the final score
-        evaluation[eval_type]['possible'] = correct + incorrect + partial + missed
-
-        # actual: number of annotations produced by the NER system
-        evaluation[eval_type]['actual'] = correct + incorrect + partial + spurious
-
-        actual = evaluation[eval_type]['actual']
-        possible = evaluation[eval_type]['possible']
-
-        if eval_type in ['partial', 'ent_type']:
-            precision = (correct + 0.5 * partial) / actual if actual > 0 else 0
-            recall = (correct + 0.5 * partial) / possible if possible > 0 else 0
-        else:
-            precision = correct / actual if actual > 0 else 0
-            recall = correct / possible if possible > 0 else 0
-
-        evaluation[eval_type]['precision'] = precision
-        evaluation[eval_type]['recall'] = recall
+    for eval_type in ['ent_type', 'partial']:
+        evaluation = compute_actual_possible(
+            evaluation[eval_type], partial_or_type=True
+        )
 
     return evaluation, evaluation_agg_entities_type
 
@@ -252,3 +234,44 @@ def find_overlap(true_range, pred_range):
     overlaps = true_set.intersection(pred_set)
 
     return overlaps
+
+def compute_actual_possible(results, partial_or_type=False):
+    """
+    Takes a result dict that has been output by compute metrics.
+    Returns the results dict with actual, possible, precision, and recall
+    populated.
+
+    When the results dicts is from partial or ent_type metrics, then
+    partial_or_type=True to ensure the right calculation is used for
+    calculating precision and recall.
+    """
+
+    correct = results['correct']
+    incorrect = results['incorrect']
+    partial = results['partial']
+    missed = results['missed']
+    spurious = results['spurious']
+
+    # Possible: nr. annotations in the gold-standard which contribute to the final score
+
+    possible = correct + incorrect + partial + missed
+
+    # Actual: number of annotations produced by the NER system
+
+    actual = correct + incorrect + partial + spurious
+
+    if partial_or_type:
+        precision = (correct + 0.5 * partial) / actual if actual > 0 else 0
+        recall = (correct + 0.5 * partial) / possible if possible > 0 else 0
+
+    else:
+        precision = correct / actual if actual > 0 else 0
+        recall = correct / possible if possible > 0 else 0
+
+    results["actual"] = actual
+    results["possible"] = possible
+    results["precision"] = precision
+    results["recall"] = recall
+
+    return results
+
