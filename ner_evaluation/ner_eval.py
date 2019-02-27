@@ -202,14 +202,40 @@ def compute_metrics(true_named_entities, pred_named_entities):
             evaluation_agg_entities_type[true.e_type]['partial']['missed'] += 1
             evaluation_agg_entities_type[true.e_type]['exact']['missed'] += 1
 
-    # Compute 'possible', 'actual', according to SemEval-2013 Task 9.1
+    # Compute 'possible', 'actual' according to SemEval-2013 Task 9.1 on the
+    # overall results, and use these to calculate precision and recall.
+
     for eval_type in ['strict', 'exact']:
-        evaluation = compute_actual_possible(evaluation[eval_type])
+        evaluation[eval_type] = compute_actual_possible(evaluation[eval_type])
 
     for eval_type in ['ent_type', 'partial']:
-        evaluation = compute_actual_possible(
+        evaluation[eval_type] = compute_actual_possible(
             evaluation[eval_type], partial_or_type=True
         )
+
+    # Compute 'possible', 'actual', and precision and recall on entity level 
+    # results. Start by cycling through the accumulated results.
+
+    for entity_type, entity_level in evaluation_agg_entities_type.items():
+
+        # Cycle through the evaluation types for each dict containing entity
+        # level results.
+
+        for eval_type in entity_level:
+
+            if eval_type in ['strict', 'exact']:
+                evaluation_agg_entities_type[entity_type][eval_type] = compute_actual_possible(
+                    entity_level[eval_type]
+                )
+
+            # If eval types are ent_type or partial, then pass the
+            # partial_or_type flag to ensure the right calculation is used for
+            # precision and recall.
+
+            if eval_type in ['ent_type', 'partial']:
+                evaluation_agg_entities_type[entity_type][eval_type] = compute_actual_possible(
+                   entity_level[eval_type], partial_or_type=True
+                )
 
     return evaluation, evaluation_agg_entities_type
 
@@ -252,7 +278,8 @@ def compute_actual_possible(results, partial_or_type=False):
     missed = results['missed']
     spurious = results['spurious']
 
-    # Possible: nr. annotations in the gold-standard which contribute to the final score
+    # Possible: number annotations in the gold-standard which contribute to the
+    # final score
 
     possible = correct + incorrect + partial + missed
 
