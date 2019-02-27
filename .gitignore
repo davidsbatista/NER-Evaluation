@@ -2,3 +2,4 @@
 .mypy_cache/
 ner_evaluation/tests/__pycache__/
 ner_evaluation/__pycache__/
+.ipynb_checkpoints/
