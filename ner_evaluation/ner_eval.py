@@ -1,7 +1,106 @@
-from copy import deepcopy
+import logging
 from collections import namedtuple
+from copy import deepcopy
+
+logging.basicConfig(
+    format="%(asctime)s %(name)s %(levelname)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    level="DEBUG",
+)
 
 Entity = namedtuple("Entity", "e_type start_offset end_offset")
+
+class Evaluator():
+
+    def __init__(self, true, pred, labels):
+        """
+        """
+
+        if len(true) != len(pred):
+            raise ValueError("Number of predicted documents does not equal true")
+
+        self.true = true
+        self.pred = pred
+
+        self.labels = labels
+
+        self.metrics_results = {
+            'correct': 0,
+            'incorrect': 0,
+            'partial': 0,
+            'missed': 0,
+            'spurious': 0,
+            'possible': 0,
+            'actual': 0,
+            'precision': 0,
+            'recall': 0,
+        }
+
+        self.results = {
+            'strict': deepcopy(self.metrics_results),
+            'ent_type': deepcopy(self.metrics_results),
+            'partial':deepcopy(self.metrics_results),
+            'exact':deepcopy(self.metrics_results),
+            }
+
+        # Create an accumulator to store results
+
+        self.evaluation_agg_entities_type = {e: deepcopy(self.results) for e in labels}
+
+
+    def evaluate(self):
+
+        logging.info(
+            "Imported %s predictions for %s true examples",
+            len(self.pred), len(self.true)
+        )
+
+        for true_ents, pred_ents in zip(self.true, self.pred):
+
+            # Check that the length of the true and predicted examples are the
+            # same. This must be checked here, because another error may not
+            # be thrown if the lengths do not match
+
+            if len(true_ents) != len(pred_ents):
+                raise ValueError("Prediction length does not match true example length")
+
+            # compute results for one message
+
+            tmp_results, tmp_agg_results = compute_metrics(
+                collect_named_entities(true_ents),
+                collect_named_entities(pred_ents),
+                self.labels
+            )
+
+            # Cycle through each result and accumulate
+
+            # TODO: Combine these loops below:
+
+            for eval_schema in self.results:
+
+                for metric in self.results[eval_schema]:
+
+                    self.results[eval_schema][metric] += tmp_results[eval_schema][metric]
+
+            # Calculate global precision and recall
+
+            self.results = compute_precision_recall_wrapper(self.results)
+
+            # Aggregate results by entity type
+
+            for e_type in self.labels:
+
+                for eval_schema in tmp_agg_results[e_type]:
+
+                    for metric in tmp_agg_results[e_type][eval_schema]:
+
+                        self.evaluation_agg_entities_type[e_type][eval_schema][metric] += tmp_agg_results[e_type][eval_schema][metric]
+
+                # Calculate precision recall at the individual entity level
+
+                self.evaluation_agg_entities_type[e_type] = compute_precision_recall_wrapper(self.evaluation_agg_entities_type[e_type])
+
+        return self.results, self.evaluation_agg_entities_type
 
 
 def collect_named_entities(tokens):
@@ -43,34 +142,49 @@ def collect_named_entities(tokens):
             end_offset = None
 
     # catches an entity that goes up until the last token
+
     if ent_type and start_offset and end_offset is None:
         named_entities.append(Entity(ent_type, start_offset, len(tokens)-1))
 
     return named_entities
 
 
-def compute_metrics(true_named_entities, pred_named_entities):
-    eval_metrics = {'correct': 0, 'incorrect': 0, 'partial': 0, 'missed': 0, 'spurious': 0}
-    target_tags_no_schema = ['MISC', 'PER', 'LOC', 'ORG']
+def compute_metrics(true_named_entities, pred_named_entities, target_tags_no_schema):
+
+
+    eval_metrics = {'correct': 0, 'incorrect': 0, 'partial': 0, 'missed': 0, 'spurious': 0, 'precision': 0, 'recall': 0}
 
     # overall results
-    evaluation = {'strict': deepcopy(eval_metrics),
-                  'ent_type': deepcopy(eval_metrics),
-                  'partial': deepcopy(eval_metrics),
-                  'exact': deepcopy(eval_metrics)}
+    
+    evaluation = {
+        'strict': deepcopy(eval_metrics),
+        'ent_type': deepcopy(eval_metrics),
+        'partial': deepcopy(eval_metrics),
+        'exact': deepcopy(eval_metrics)
+    }
 
     # results by entity type
+
     evaluation_agg_entities_type = {e: deepcopy(evaluation) for e in target_tags_no_schema}
 
-    true_which_overlapped_with_pred = []  # keep track of entities that overlapped
+    # keep track of entities that overlapped
+
+    true_which_overlapped_with_pred = []
+
+    # Subset into only the tags that we are interested in.
+    # NOTE: we only subset the true entities. Incorrect predicted entities now
+    # become spurious, (and may be spurious) so we should not subset them.
+
+    true_named_entities = [ent for ent in true_named_entities if ent.e_type in target_tags_no_schema]
 
     # go through each predicted named-entity
+
     for pred in pred_named_entities:
         found_overlap = False
 
-        # Check each of the potential scenarios in turn. See 
+        # Check each of the potential scenarios in turn. See
         # http://www.davidsbatista.net/blog/2018/05/09/Named_Entity_Evaluation/
-        # for scenario explanation. 
+        # for scenario explanation.
 
         # Scenario I: Exact match between true and pred
 
@@ -115,6 +229,7 @@ def compute_metrics(true_named_entities, pred_named_entities):
 
                     true_which_overlapped_with_pred.append(true)
                     found_overlap = True
+
                     break
 
                 # check for an overlap i.e. not exact boundary match, with true entities
@@ -142,9 +257,10 @@ def compute_metrics(true_named_entities, pred_named_entities):
                         evaluation_agg_entities_type[true.e_type]['exact']['incorrect'] += 1
 
                         found_overlap = True
+
                         break
 
-                    # Scenario VI: Entities overlap, but the entity type is 
+                    # Scenario VI: Entities overlap, but the entity type is
                     # different.
 
                     else:
@@ -167,22 +283,35 @@ def compute_metrics(true_named_entities, pred_named_entities):
                         # evaluation_agg_entities_type[pred.e_type]['strict']['spurious'] += 1
 
                         found_overlap = True
+
                         break
 
             # Scenario II: Entities are spurious (i.e., over-generated).
 
             if not found_overlap:
-                # overall results
+
+                # Overall results
+
                 evaluation['strict']['spurious'] += 1
                 evaluation['ent_type']['spurious'] += 1
                 evaluation['partial']['spurious'] += 1
                 evaluation['exact']['spurious'] += 1
 
-                # aggregated by entity type results
-                evaluation_agg_entities_type[pred.e_type]['strict']['spurious'] += 1
-                evaluation_agg_entities_type[pred.e_type]['ent_type']['spurious'] += 1
-                evaluation_agg_entities_type[pred.e_type]['partial']['spurious'] += 1
-                evaluation_agg_entities_type[pred.e_type]['exact']['spurious'] += 1
+                # Aggregated by entity type results
+
+                # NOTE: when pred.e_type is not found in target_tags_no_schema
+                # or when it simply does not appear in the test set, then it is
+                # spurious, but it is not clear where to assign it at the tag
+                # level. In this case, it is applied to all target_tags
+                # found in this example. This will mean that the sum of the
+                # evaluation_agg_entities will not equal evaluation.
+
+                for true in target_tags_no_schema:                    
+
+                    evaluation_agg_entities_type[true]['strict']['spurious'] += 1
+                    evaluation_agg_entities_type[true]['ent_type']['spurious'] += 1
+                    evaluation_agg_entities_type[true]['partial']['spurious'] += 1
+                    evaluation_agg_entities_type[true]['exact']['spurious'] += 1
 
     # Scenario III: Entity was missed entirely.
 
@@ -208,7 +337,7 @@ def compute_metrics(true_named_entities, pred_named_entities):
     for eval_type in evaluation:
         evaluation[eval_type] = compute_actual_possible(evaluation[eval_type])
 
-    # Compute 'possible', 'actual', and precision and recall on entity level 
+    # Compute 'possible', 'actual', and precision and recall on entity level
     # results. Start by cycling through the accumulated results.
 
     for entity_type, entity_level in evaluation_agg_entities_type.items():
