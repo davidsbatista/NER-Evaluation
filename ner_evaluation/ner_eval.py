@@ -202,32 +202,25 @@ def compute_metrics(true_named_entities, pred_named_entities):
             evaluation_agg_entities_type[true.e_type]['partial']['missed'] += 1
             evaluation_agg_entities_type[true.e_type]['exact']['missed'] += 1
 
-    # Compute 'possible', 'actual', according to SemEval-2013 Task 9.1
-    for eval_type in ['strict', 'ent_type', 'partial', 'exact']:
-        correct = evaluation[eval_type]['correct']
-        incorrect = evaluation[eval_type]['incorrect']
-        partial = evaluation[eval_type]['partial']
-        missed = evaluation[eval_type]['missed']
-        spurious = evaluation[eval_type]['spurious']
+    # Compute 'possible', 'actual' according to SemEval-2013 Task 9.1 on the
+    # overall results, and use these to calculate precision and recall.
 
-        # possible: nr. annotations in the gold-standard which contribute to the final score
-        evaluation[eval_type]['possible'] = correct + incorrect + partial + missed
+    for eval_type in evaluation:
+        evaluation[eval_type] = compute_actual_possible(evaluation[eval_type])
 
-        # actual: number of annotations produced by the NER system
-        evaluation[eval_type]['actual'] = correct + incorrect + partial + spurious
+    # Compute 'possible', 'actual', and precision and recall on entity level 
+    # results. Start by cycling through the accumulated results.
 
-        actual = evaluation[eval_type]['actual']
-        possible = evaluation[eval_type]['possible']
+    for entity_type, entity_level in evaluation_agg_entities_type.items():
 
-        if eval_type in ['partial', 'ent_type']:
-            precision = (correct + 0.5 * partial) / actual if actual > 0 else 0
-            recall = (correct + 0.5 * partial) / possible if possible > 0 else 0
-        else:
-            precision = correct / actual if actual > 0 else 0
-            recall = correct / possible if possible > 0 else 0
+        # Cycle through the evaluation types for each dict containing entity
+        # level results.
 
-        evaluation[eval_type]['precision'] = precision
-        evaluation[eval_type]['recall'] = recall
+        for eval_type in entity_level:
+
+            evaluation_agg_entities_type[entity_type][eval_type] = compute_actual_possible(
+                entity_level[eval_type]
+            )
 
     return evaluation, evaluation_agg_entities_type
 
@@ -252,3 +245,73 @@ def find_overlap(true_range, pred_range):
     overlaps = true_set.intersection(pred_set)
 
     return overlaps
+
+def compute_actual_possible(results):
+    """
+    Takes a result dict that has been output by compute metrics.
+    Returns the results dict with actual, possible populated.
+
+    When the results dicts is from partial or ent_type metrics, then
+    partial_or_type=True to ensure the right calculation is used for
+    calculating precision and recall.
+    """
+
+    correct = results['correct']
+    incorrect = results['incorrect']
+    partial = results['partial']
+    missed = results['missed']
+    spurious = results['spurious']
+
+    # Possible: number annotations in the gold-standard which contribute to the
+    # final score
+
+    possible = correct + incorrect + partial + missed
+
+    # Actual: number of annotations produced by the NER system
+
+    actual = correct + incorrect + partial + spurious
+
+    results["actual"] = actual
+    results["possible"] = possible
+
+    return results
+
+def compute_precision_recall(results, partial_or_type=False):
+    """
+    Takes a result dict that has been output by compute metrics.
+    Returns the results dict with precison and recall populated.
+
+    When the results dicts is from partial or ent_type metrics, then
+    partial_or_type=True to ensure the right calculation is used for
+    calculating precision and recall.
+    """
+
+    actual = results["actual"]
+    possible = results["possible"]
+    partial = results['partial']
+    correct = results['correct']
+
+    if partial_or_type:
+        precision = (correct + 0.5 * partial) / actual if actual > 0 else 0
+        recall = (correct + 0.5 * partial) / possible if possible > 0 else 0
+
+    else:
+        precision = correct / actual if actual > 0 else 0
+        recall = correct / possible if possible > 0 else 0
+
+    results["precision"] = precision
+    results["recall"] = recall
+
+    return results
+
+def compute_precision_recall_wrapper(results):
+    """
+    Wraps the compute_precision_recall function and runs on a dict of results
+    """
+
+    results_a = {key: compute_precision_recall(value, True) for key, value in results.items() if key in ['partial', 'ent_type']}
+    results_b = {key: compute_precision_recall(value) for key, value in results.items() if key in ['strict', 'exact']}
+
+    results = {**results_a, **results_b}
+
+    return results
