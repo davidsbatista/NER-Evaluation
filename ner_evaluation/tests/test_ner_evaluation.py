@@ -3,6 +3,8 @@ from ner_evaluation.ner_eval import compute_metrics
 from ner_evaluation.ner_eval import collect_named_entities
 from ner_evaluation.ner_eval import find_overlap
 from ner_evaluation.ner_eval import compute_actual_possible
+from ner_evaluation.ner_eval import compute_precision_recall
+from ner_evaluation.ner_eval import compute_precision_recall_wrapper
 
 
 def test_collect_named_entities_same_type_in_sequence():
@@ -39,6 +41,15 @@ def test_compute_metrics_case_1():
     ]
 
     results, results_agg = compute_metrics(true_named_entities, pred_named_entities)
+
+    results = compute_precision_recall_wrapper(results)
+
+    #results_a = {key: compute_precision_recall(value, True) for key, value in results.items() if key in ['partial', 'ent_type']}
+    #results_b = {key: compute_precision_recall(value) for key, value in results.items() if key in ['strict', 'exact']}
+
+    #results = {**results_a, **results_b}
+
+
     expected = {'strict': {'correct': 2,
                            'incorrect': 3,
                            'partial': 0,
@@ -98,8 +109,6 @@ def test_compute_metrics_agg_scenario_3():
                 'spurious': 0,
                 'actual': 0,
                 'possible': 1,
-                'precision': 0,
-                'recall': 0.0,
                 },
             'ent_type': {
                 'correct': 0,
@@ -109,8 +118,6 @@ def test_compute_metrics_agg_scenario_3():
                 'spurious': 0,
                 'actual': 0,
                 'possible': 1,
-                'precision': 0,
-                'recall': 0.0,
             },
             'partial': {
                 'correct': 0,
@@ -120,8 +127,6 @@ def test_compute_metrics_agg_scenario_3():
                 'spurious': 0,
                 'actual': 0,
                 'possible': 1,
-                'precision': 0,
-                'recall': 0.0,
             },
             'exact': {
                 'correct': 0,
@@ -131,8 +136,6 @@ def test_compute_metrics_agg_scenario_3():
                 'spurious': 0,
                 'actual': 0,
                 'possible': 1,
-                'precision': 0,
-                'recall': 0.0,
             }
         }
     }
@@ -161,8 +164,6 @@ def test_compute_metrics_agg_scenario_2():
                 'spurious': 1,
                 'actual': 1,
                 'possible': 0,
-                'precision': 0,
-                'recall': 0.0,
                 },
             'ent_type': {
                 'correct': 0,
@@ -172,8 +173,6 @@ def test_compute_metrics_agg_scenario_2():
                 'spurious': 1,
                 'actual': 1,
                 'possible': 0,
-                'precision': 0,
-                'recall': 0.0,
             },
             'partial': {
                 'correct': 0,
@@ -183,8 +182,6 @@ def test_compute_metrics_agg_scenario_2():
                 'spurious': 1,
                 'actual': 1,
                 'possible': 0,
-                'precision': 0,
-                'recall': 0.0,
             },
             'exact': {
                 'correct': 0,
@@ -194,8 +191,6 @@ def test_compute_metrics_agg_scenario_2():
                 'spurious': 1,
                 'actual': 1,
                 'possible': 0,
-                'precision': 0,
-                'recall': 0.0,
             }
         }
     }
@@ -224,8 +219,6 @@ def test_compute_metrics_agg_scenario_5():
                 'spurious': 0,
                 'actual': 1,
                 'possible': 1,
-                'precision': 0,
-                'recall': 0.0,
                 },
             'ent_type': {
                 'correct': 1,
@@ -235,8 +228,6 @@ def test_compute_metrics_agg_scenario_5():
                 'spurious': 0,
                 'actual': 1,
                 'possible': 1,
-                'precision': 1,
-                'recall': 1.0,
             },
             'partial': {
                 'correct': 0,
@@ -246,8 +237,6 @@ def test_compute_metrics_agg_scenario_5():
                 'spurious': 0,
                 'actual': 1,
                 'possible': 1,
-                'precision': 0.5,
-                'recall': 0.5,
             },
             'exact': {
                 'correct': 0,
@@ -257,8 +246,6 @@ def test_compute_metrics_agg_scenario_5():
                 'spurious': 0,
                 'actual': 1,
                 'possible': 1,
-                'precision': 0,
-                'recall': 0.0,
             }
         }
     }
@@ -286,8 +273,6 @@ def test_compute_metrics_agg_scenario_4():
                 'spurious': 0,
                 'actual': 1,
                 'possible': 1,
-                'precision': 0.0,
-                'recall': 0.0,
                 },
             'ent_type': {
                 'correct': 0,
@@ -297,8 +282,6 @@ def test_compute_metrics_agg_scenario_4():
                 'spurious': 0,
                 'actual': 1,
                 'possible': 1,
-                'precision': 0,
-                'recall': 0.0,
             },
             'partial': {
                 'correct': 1,
@@ -308,8 +291,6 @@ def test_compute_metrics_agg_scenario_4():
                 'spurious': 0,
                 'actual': 1,
                 'possible': 1,
-                'precision': 1.0,
-                'recall': 1.0,
             },
             'exact': {
                 'correct': 1,
@@ -319,8 +300,6 @@ def test_compute_metrics_agg_scenario_4():
                 'spurious': 0,
                 'actual': 1,
                 'possible': 1,
-                'precision': 1.0,
-                'recall': 1.0,
             }
         },
         'LOC': {
@@ -332,8 +311,6 @@ def test_compute_metrics_agg_scenario_4():
                 'spurious': 0,
                 'actual': 0,
                 'possible': 0,
-                'precision': 0,
-                'recall': 0.0,
                 },
             'ent_type': {
                 'correct': 0,
@@ -343,8 +320,6 @@ def test_compute_metrics_agg_scenario_4():
                 'spurious': 0,
                 'actual': 0,
                 'possible': 0,
-                'precision': 0,
-                'recall': 0.0,
             },
             'partial': {
                 'correct': 0,
@@ -354,8 +329,6 @@ def test_compute_metrics_agg_scenario_4():
                 'spurious': 0,
                 'actual': 0,
                 'possible': 0,
-                'precision': 0,
-                'recall': 0.0,
             },
             'exact': {
                 'correct': 0,
@@ -365,8 +338,6 @@ def test_compute_metrics_agg_scenario_4():
                 'spurious': 0,
                 'actual': 0,
                 'possible': 0,
-                'precision': 0,
-                'recall': 0.0,
             }
         }
     }
@@ -396,8 +367,6 @@ def test_compute_metrics_agg_scenario_1():
                 'spurious': 0,
                 'actual': 1,
                 'possible': 1,
-                'precision': 1.0,
-                'recall': 1.0,
                 },
             'ent_type': {
                 'correct': 1,
@@ -407,8 +376,6 @@ def test_compute_metrics_agg_scenario_1():
                 'spurious': 0,
                 'actual': 1,
                 'possible': 1,
-                'precision': 1.0,
-                'recall': 1.0,
             },
             'partial': {
                 'correct': 1,
@@ -418,8 +385,6 @@ def test_compute_metrics_agg_scenario_1():
                 'spurious': 0,
                 'actual': 1,
                 'possible': 1,
-                'precision': 1.0,
-                'recall': 1.0,
             },
             'exact': {
                 'correct': 1,
@@ -429,8 +394,6 @@ def test_compute_metrics_agg_scenario_1():
                 'spurious': 0,
                 'actual': 1,
                 'possible': 1,
-                'precision': 1.0,
-                'recall': 1.0,
             }
         }
     }
@@ -458,8 +421,6 @@ def test_compute_metrics_agg_scenario_6():
                 'spurious': 0,
                 'actual': 1,
                 'possible': 1,
-                'precision': 0.0,
-                'recall': 0.0,
                 },
             'ent_type': {
                 'correct': 0,
@@ -469,8 +430,6 @@ def test_compute_metrics_agg_scenario_6():
                 'spurious': 0,
                 'actual': 1,
                 'possible': 1,
-                'precision': 0.0,
-                'recall': 0.0,
             },
             'partial': {
                 'correct': 0,
@@ -480,8 +439,6 @@ def test_compute_metrics_agg_scenario_6():
                 'spurious': 0,
                 'actual': 1,
                 'possible': 1,
-                'precision': 0.5,
-                'recall': 0.5,
             },
             'exact': {
                 'correct': 0,
@@ -491,8 +448,6 @@ def test_compute_metrics_agg_scenario_6():
                 'spurious': 0,
                 'actual': 1,
                 'possible': 1,
-                'precision': 0.0,
-                'recall': 0.0,
             }
         },
         'LOC': {
@@ -504,8 +459,6 @@ def test_compute_metrics_agg_scenario_6():
                 'spurious': 0,
                 'actual': 0,
                 'possible': 0,
-                'precision': 0.0,
-                'recall': 0.0,
                 },
             'ent_type': {
                 'correct': 0,
@@ -515,8 +468,6 @@ def test_compute_metrics_agg_scenario_6():
                 'spurious': 0,
                 'actual': 0,
                 'possible': 0,
-                'precision': 0.0,
-                'recall': 0.0,
             },
             'partial': {
                 'correct': 0,
@@ -526,8 +477,6 @@ def test_compute_metrics_agg_scenario_6():
                 'spurious': 0,
                 'actual': 0,
                 'possible': 0,
-                'precision': 0.0,
-                'recall': 0.0,
             },
             'exact': {
                 'correct': 0,
@@ -537,8 +486,6 @@ def test_compute_metrics_agg_scenario_6():
                 'spurious': 0,
                 'actual': 0,
                 'possible': 0,
-                'precision': 0.0,
-                'recall': 0.0,
             }
         }
     }
@@ -628,11 +575,37 @@ def test_compute_actual_possible():
         'spurious': 2,
         'possible': 15,
         'actual': 13,
+    }
+
+    out = compute_actual_possible(results)
+
+    assert out == expected
+
+def test_compute_precision_recall():
+
+    results = {
+        'correct': 6,
+        'incorrect': 3,
+        'partial': 2,
+        'missed': 4,
+        'spurious': 2,
+        'possible': 15,
+        'actual': 13,
+        }
+
+    expected = {
+        'correct': 6,
+        'incorrect': 3,
+        'partial': 2,
+        'missed': 4,
+        'spurious': 2,
+        'possible': 15,
+        'actual': 13,
         'precision': 0.46153846153846156, 
         'recall': 0.4
     }
 
-    out = compute_actual_possible(results)
+    out = compute_precision_recall(results)
 
     assert out == expected
 

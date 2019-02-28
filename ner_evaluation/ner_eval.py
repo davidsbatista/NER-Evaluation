@@ -205,13 +205,8 @@ def compute_metrics(true_named_entities, pred_named_entities):
     # Compute 'possible', 'actual' according to SemEval-2013 Task 9.1 on the
     # overall results, and use these to calculate precision and recall.
 
-    for eval_type in ['strict', 'exact']:
+    for eval_type in evaluation:
         evaluation[eval_type] = compute_actual_possible(evaluation[eval_type])
-
-    for eval_type in ['ent_type', 'partial']:
-        evaluation[eval_type] = compute_actual_possible(
-            evaluation[eval_type], partial_or_type=True
-        )
 
     # Compute 'possible', 'actual', and precision and recall on entity level 
     # results. Start by cycling through the accumulated results.
@@ -223,19 +218,9 @@ def compute_metrics(true_named_entities, pred_named_entities):
 
         for eval_type in entity_level:
 
-            if eval_type in ['strict', 'exact']:
-                evaluation_agg_entities_type[entity_type][eval_type] = compute_actual_possible(
-                    entity_level[eval_type]
-                )
-
-            # If eval types are ent_type or partial, then pass the
-            # partial_or_type flag to ensure the right calculation is used for
-            # precision and recall.
-
-            if eval_type in ['ent_type', 'partial']:
-                evaluation_agg_entities_type[entity_type][eval_type] = compute_actual_possible(
-                   entity_level[eval_type], partial_or_type=True
-                )
+            evaluation_agg_entities_type[entity_type][eval_type] = compute_actual_possible(
+                entity_level[eval_type]
+            )
 
     return evaluation, evaluation_agg_entities_type
 
@@ -261,11 +246,10 @@ def find_overlap(true_range, pred_range):
 
     return overlaps
 
-def compute_actual_possible(results, partial_or_type=False):
+def compute_actual_possible(results):
     """
     Takes a result dict that has been output by compute metrics.
-    Returns the results dict with actual, possible, precision, and recall
-    populated.
+    Returns the results dict with actual, possible populated.
 
     When the results dicts is from partial or ent_type metrics, then
     partial_or_type=True to ensure the right calculation is used for
@@ -287,6 +271,26 @@ def compute_actual_possible(results, partial_or_type=False):
 
     actual = correct + incorrect + partial + spurious
 
+    results["actual"] = actual
+    results["possible"] = possible
+
+    return results
+
+def compute_precision_recall(results, partial_or_type=False):
+    """
+    Takes a result dict that has been output by compute metrics.
+    Returns the results dict with precison and recall populated.
+
+    When the results dicts is from partial or ent_type metrics, then
+    partial_or_type=True to ensure the right calculation is used for
+    calculating precision and recall.
+    """
+
+    actual = results["actual"]
+    possible = results["possible"]
+    partial = results['partial']
+    correct = results['correct']
+
     if partial_or_type:
         precision = (correct + 0.5 * partial) / actual if actual > 0 else 0
         recall = (correct + 0.5 * partial) / possible if possible > 0 else 0
@@ -295,10 +299,19 @@ def compute_actual_possible(results, partial_or_type=False):
         precision = correct / actual if actual > 0 else 0
         recall = correct / possible if possible > 0 else 0
 
-    results["actual"] = actual
-    results["possible"] = possible
     results["precision"] = precision
     results["recall"] = recall
 
     return results
 
+def compute_precision_recall_wrapper(results):
+    """
+    Wraps the compute_precision_recall function and runs on a dict of results
+    """
+
+    results_a = {key: compute_precision_recall(value, True) for key, value in results.items() if key in ['partial', 'ent_type']}
+    results_b = {key: compute_precision_recall(value) for key, value in results.items() if key in ['strict', 'exact']}
+
+    results = {**results_a, **results_b}
+
+    return results
