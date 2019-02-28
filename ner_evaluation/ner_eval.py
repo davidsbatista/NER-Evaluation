@@ -246,6 +246,7 @@ def find_overlap(true_range, pred_range):
 
     return overlaps
 
+
 def compute_actual_possible(results):
     """
     Takes a result dict that has been output by compute metrics.
@@ -276,6 +277,7 @@ def compute_actual_possible(results):
 
     return results
 
+
 def compute_precision_recall(results, partial_or_type=False):
     """
     Takes a result dict that has been output by compute metrics.
@@ -304,13 +306,16 @@ def compute_precision_recall(results, partial_or_type=False):
 
     return results
 
+
 def compute_precision_recall_wrapper(results):
     """
     Wraps the compute_precision_recall function and runs on a dict of results
     """
 
-    results_a = {key: compute_precision_recall(value, True) for key, value in results.items() if key in ['partial', 'ent_type']}
-    results_b = {key: compute_precision_recall(value) for key, value in results.items() if key in ['strict', 'exact']}
+    results_a = {key: compute_precision_recall(value, True) for key, value in results.items() if
+                 key in ['partial', 'ent_type']}
+    results_b = {key: compute_precision_recall(value) for key, value in results.items() if
+                 key in ['strict', 'exact']}
 
     results = {**results_a, **results_b}
 

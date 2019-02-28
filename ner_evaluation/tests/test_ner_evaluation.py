@@ -14,12 +14,14 @@ def test_collect_named_entities_same_type_in_sequence():
                 Entity(e_type='LOC', start_offset=3, end_offset=4)]
     assert result == expected
 
+
 def test_collect_named_entities_entity_goes_until_last_token():
     tags = ['O', 'B-LOC', 'I-LOC', 'B-LOC', 'I-LOC']
     result = collect_named_entities(tags)
     expected = [Entity(e_type='LOC', start_offset=1, end_offset=2),
                 Entity(e_type='LOC', start_offset=3, end_offset=4)]
     assert result == expected
+
 
 def test_compute_metrics_case_1():
     true_named_entities = [
@@ -43,12 +45,6 @@ def test_compute_metrics_case_1():
     results, results_agg = compute_metrics(true_named_entities, pred_named_entities)
 
     results = compute_precision_recall_wrapper(results)
-
-    #results_a = {key: compute_precision_recall(value, True) for key, value in results.items() if key in ['partial', 'ent_type']}
-    #results_b = {key: compute_precision_recall(value) for key, value in results.items() if key in ['strict', 'exact']}
-
-    #results = {**results_a, **results_b}
-
 
     expected = {'strict': {'correct': 2,
                            'incorrect': 3,
@@ -255,6 +251,7 @@ def test_compute_metrics_agg_scenario_5():
     assert results_agg['PER']['partial'] == expected_agg['PER']['partial']
     assert results_agg['PER']['exact'] == expected_agg['PER']['exact']
 
+
 def test_compute_metrics_agg_scenario_4():
 
     true_named_entities = [Entity('PER', 59, 69)]
@@ -349,6 +346,7 @@ def test_compute_metrics_agg_scenario_4():
 
     assert results_agg['LOC'] == expected_agg['LOC']
 
+
 def test_compute_metrics_agg_scenario_1():
 
     true_named_entities = [Entity('PER', 59, 69)]
@@ -402,6 +400,7 @@ def test_compute_metrics_agg_scenario_1():
     assert results_agg['PER']['ent_type'] == expected_agg['PER']['ent_type']
     assert results_agg['PER']['partial'] == expected_agg['PER']['partial']
     assert results_agg['PER']['exact'] == expected_agg['PER']['exact']
+
 
 def test_compute_metrics_agg_scenario_6():
 
@@ -497,6 +496,7 @@ def test_compute_metrics_agg_scenario_6():
 
     assert results_agg["LOC"] == expected_agg["LOC"]
 
+
 def test_find_overlap_no_overlap():
 
     pred_entity = Entity('LOC', 1, 10)
@@ -511,6 +511,7 @@ def test_find_overlap_no_overlap():
     intersect = find_overlap(pred_set, true_set)
 
     assert not intersect
+
 
 def test_find_overlap_total_overlap():
 
@@ -527,6 +528,7 @@ def test_find_overlap_total_overlap():
 
     assert intersect
 
+
 def test_find_overlap_start_overlap():
 
     pred_entity = Entity('LOC', 5, 12)
@@ -542,6 +544,7 @@ def test_find_overlap_start_overlap():
 
     assert intersect
 
+
 def test_find_overlap_end_overlap():
 
     pred_entity = Entity('LOC', 15, 25)
@@ -556,6 +559,7 @@ def test_find_overlap_end_overlap():
     intersect = find_overlap(pred_set, true_set)
 
     assert intersect
+
 
 def test_compute_actual_possible():
 
@@ -580,6 +584,7 @@ def test_compute_actual_possible():
     out = compute_actual_possible(results)
 
     assert out == expected
+
 
 def test_compute_precision_recall():
 
