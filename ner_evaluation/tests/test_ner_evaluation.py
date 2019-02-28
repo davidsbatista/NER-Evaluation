@@ -95,33 +95,52 @@ def test_compute_metrics_agg_scenario_3():
                 'incorrect': 0,
                 'partial': 0,
                 'missed': 1,
-                'spurious': 0
+                'spurious': 0,
+                'actual': 0,
+                'possible': 1,
+                'precision': 0,
+                'recall': 0.0,
                 },
             'ent_type': {
                 'correct': 0,
                 'incorrect': 0,
                 'partial': 0,
                 'missed': 1,
-                'spurious': 0
+                'spurious': 0,
+                'actual': 0,
+                'possible': 1,
+                'precision': 0,
+                'recall': 0.0,
             },
             'partial': {
                 'correct': 0,
                 'incorrect': 0,
                 'partial': 0,
                 'missed': 1,
-                'spurious': 0
+                'spurious': 0,
+                'actual': 0,
+                'possible': 1,
+                'precision': 0,
+                'recall': 0.0,
             },
             'exact': {
                 'correct': 0,
                 'incorrect': 0,
                 'partial': 0,
                 'missed': 1,
-                'spurious': 0
+                'spurious': 0,
+                'actual': 0,
+                'possible': 1,
+                'precision': 0,
+                'recall': 0.0,
             }
         }
     }
 
-    assert results_agg["PER"] == expected_agg["PER"]
+    assert results_agg['PER']['strict'] == expected_agg['PER']['strict']
+    assert results_agg['PER']['ent_type'] == expected_agg['PER']['ent_type']
+    assert results_agg['PER']['partial'] == expected_agg['PER']['partial']
+    assert results_agg['PER']['exact'] == expected_agg['PER']['exact']
 
 
 def test_compute_metrics_agg_scenario_2():
@@ -139,33 +158,52 @@ def test_compute_metrics_agg_scenario_2():
                 'incorrect': 0,
                 'partial': 0,
                 'missed': 0,
-                'spurious': 1
+                'spurious': 1,
+                'actual': 1,
+                'possible': 0,
+                'precision': 0,
+                'recall': 0.0,
                 },
             'ent_type': {
                 'correct': 0,
                 'incorrect': 0,
                 'partial': 0,
                 'missed': 0,
-                'spurious': 1
+                'spurious': 1,
+                'actual': 1,
+                'possible': 0,
+                'precision': 0,
+                'recall': 0.0,
             },
             'partial': {
                 'correct': 0,
                 'incorrect': 0,
                 'partial': 0,
                 'missed': 0,
-                'spurious': 1
+                'spurious': 1,
+                'actual': 1,
+                'possible': 0,
+                'precision': 0,
+                'recall': 0.0,
             },
             'exact': {
                 'correct': 0,
                 'incorrect': 0,
                 'partial': 0,
                 'missed': 0,
-                'spurious': 1
+                'spurious': 1,
+                'actual': 1,
+                'possible': 0,
+                'precision': 0,
+                'recall': 0.0,
             }
         }
     }
 
-    assert results_agg["PER"] == expected_agg["PER"]
+    assert results_agg['PER']['strict'] == expected_agg['PER']['strict']
+    assert results_agg['PER']['ent_type'] == expected_agg['PER']['ent_type']
+    assert results_agg['PER']['partial'] == expected_agg['PER']['partial']
+    assert results_agg['PER']['exact'] == expected_agg['PER']['exact']
 
 
 def test_compute_metrics_agg_scenario_5():
@@ -183,33 +221,52 @@ def test_compute_metrics_agg_scenario_5():
                 'incorrect': 1,
                 'partial': 0,
                 'missed': 0,
-                'spurious': 0
+                'spurious': 0,
+                'actual': 1,
+                'possible': 1,
+                'precision': 0,
+                'recall': 0.0,
                 },
             'ent_type': {
                 'correct': 1,
                 'incorrect': 0,
                 'partial': 0,
                 'missed': 0,
-                'spurious': 0
+                'spurious': 0,
+                'actual': 1,
+                'possible': 1,
+                'precision': 1,
+                'recall': 1.0,
             },
             'partial': {
                 'correct': 0,
                 'incorrect': 0,
                 'partial': 1,
                 'missed': 0,
-                'spurious': 0
+                'spurious': 0,
+                'actual': 1,
+                'possible': 1,
+                'precision': 0.5,
+                'recall': 0.5,
             },
             'exact': {
                 'correct': 0,
                 'incorrect': 1,
                 'partial': 0,
                 'missed': 0,
-                'spurious': 0
+                'spurious': 0,
+                'actual': 1,
+                'possible': 1,
+                'precision': 0,
+                'recall': 0.0,
             }
         }
     }
 
-    assert results_agg["PER"] == expected_agg["PER"]
+    assert results_agg['PER']['strict'] == expected_agg['PER']['strict']
+    assert results_agg['PER']['ent_type'] == expected_agg['PER']['ent_type']
+    assert results_agg['PER']['partial'] == expected_agg['PER']['partial']
+    assert results_agg['PER']['exact'] == expected_agg['PER']['exact']
 
 def test_compute_metrics_agg_scenario_4():
 
@@ -226,28 +283,44 @@ def test_compute_metrics_agg_scenario_4():
                 'incorrect': 1,
                 'partial': 0,
                 'missed': 0,
-                'spurious': 0
+                'spurious': 0,
+                'actual': 1,
+                'possible': 1,
+                'precision': 0.0,
+                'recall': 0.0,
                 },
             'ent_type': {
                 'correct': 0,
                 'incorrect': 1,
                 'partial': 0,
                 'missed': 0,
-                'spurious': 0
+                'spurious': 0,
+                'actual': 1,
+                'possible': 1,
+                'precision': 0,
+                'recall': 0.0,
             },
             'partial': {
                 'correct': 1,
                 'incorrect': 0,
                 'partial': 0,
                 'missed': 0,
-                'spurious': 0
+                'spurious': 0,
+                'actual': 1,
+                'possible': 1,
+                'precision': 1.0,
+                'recall': 1.0,
             },
             'exact': {
                 'correct': 1,
                 'incorrect': 0,
                 'partial': 0,
                 'missed': 0,
-                'spurious': 0
+                'spurious': 0,
+                'actual': 1,
+                'possible': 1,
+                'precision': 1.0,
+                'recall': 1.0,
             }
         },
         'LOC': {
@@ -256,33 +329,54 @@ def test_compute_metrics_agg_scenario_4():
                 'incorrect': 0,
                 'partial': 0,
                 'missed': 0,
-                'spurious': 0
+                'spurious': 0,
+                'actual': 0,
+                'possible': 0,
+                'precision': 0,
+                'recall': 0.0,
                 },
             'ent_type': {
                 'correct': 0,
                 'incorrect': 0,
                 'partial': 0,
                 'missed': 0,
-                'spurious': 0
+                'spurious': 0,
+                'actual': 0,
+                'possible': 0,
+                'precision': 0,
+                'recall': 0.0,
             },
             'partial': {
                 'correct': 0,
                 'incorrect': 0,
                 'partial': 0,
                 'missed': 0,
-                'spurious': 0
+                'spurious': 0,
+                'actual': 0,
+                'possible': 0,
+                'precision': 0,
+                'recall': 0.0,
             },
             'exact': {
                 'correct': 0,
                 'incorrect': 0,
                 'partial': 0,
                 'missed': 0,
-                'spurious': 0
+                'spurious': 0,
+                'actual': 0,
+                'possible': 0,
+                'precision': 0,
+                'recall': 0.0,
             }
         }
     }
 
-    assert results_agg["PER"] == expected_agg["PER"]
+    assert results_agg['PER']['strict'] == expected_agg['PER']['strict']
+    assert results_agg['PER']['ent_type'] == expected_agg['PER']['ent_type']
+    assert results_agg['PER']['partial'] == expected_agg['PER']['partial']
+    assert results_agg['PER']['exact'] == expected_agg['PER']['exact']
+
+    assert results_agg['LOC'] == expected_agg['LOC']
 
 def test_compute_metrics_agg_scenario_1():
 
@@ -299,33 +393,52 @@ def test_compute_metrics_agg_scenario_1():
                 'incorrect': 0,
                 'partial': 0,
                 'missed': 0,
-                'spurious': 0
+                'spurious': 0,
+                'actual': 1,
+                'possible': 1,
+                'precision': 1.0,
+                'recall': 1.0,
                 },
             'ent_type': {
                 'correct': 1,
                 'incorrect': 0,
                 'partial': 0,
                 'missed': 0,
-                'spurious': 0
+                'spurious': 0,
+                'actual': 1,
+                'possible': 1,
+                'precision': 1.0,
+                'recall': 1.0,
             },
             'partial': {
                 'correct': 1,
                 'incorrect': 0,
                 'partial': 0,
                 'missed': 0,
-                'spurious': 0
+                'spurious': 0,
+                'actual': 1,
+                'possible': 1,
+                'precision': 1.0,
+                'recall': 1.0,
             },
             'exact': {
                 'correct': 1,
                 'incorrect': 0,
                 'partial': 0,
                 'missed': 0,
-                'spurious': 0
+                'spurious': 0,
+                'actual': 1,
+                'possible': 1,
+                'precision': 1.0,
+                'recall': 1.0,
             }
         }
     }
 
-    assert results_agg["PER"] == expected_agg["PER"]
+    assert results_agg['PER']['strict'] == expected_agg['PER']['strict']
+    assert results_agg['PER']['ent_type'] == expected_agg['PER']['ent_type']
+    assert results_agg['PER']['partial'] == expected_agg['PER']['partial']
+    assert results_agg['PER']['exact'] == expected_agg['PER']['exact']
 
 def test_compute_metrics_agg_scenario_6():
 
@@ -342,28 +455,44 @@ def test_compute_metrics_agg_scenario_6():
                 'incorrect': 1,
                 'partial': 0,
                 'missed': 0,
-                'spurious': 0
+                'spurious': 0,
+                'actual': 1,
+                'possible': 1,
+                'precision': 0.0,
+                'recall': 0.0,
                 },
             'ent_type': {
                 'correct': 0,
                 'incorrect': 1,
                 'partial': 0,
                 'missed': 0,
-                'spurious': 0
+                'spurious': 0,
+                'actual': 1,
+                'possible': 1,
+                'precision': 0.0,
+                'recall': 0.0,
             },
             'partial': {
                 'correct': 0,
                 'incorrect': 0,
                 'partial': 1,
                 'missed': 0,
-                'spurious': 0
+                'spurious': 0,
+                'actual': 1,
+                'possible': 1,
+                'precision': 0.5,
+                'recall': 0.5,
             },
             'exact': {
                 'correct': 0,
                 'incorrect': 1,
                 'partial': 0,
                 'missed': 0,
-                'spurious': 0
+                'spurious': 0,
+                'actual': 1,
+                'possible': 1,
+                'precision': 0.0,
+                'recall': 0.0,
             }
         },
         'LOC': {
@@ -372,33 +501,53 @@ def test_compute_metrics_agg_scenario_6():
                 'incorrect': 0,
                 'partial': 0,
                 'missed': 0,
-                'spurious': 0
+                'spurious': 0,
+                'actual': 0,
+                'possible': 0,
+                'precision': 0.0,
+                'recall': 0.0,
                 },
             'ent_type': {
                 'correct': 0,
                 'incorrect': 0,
                 'partial': 0,
                 'missed': 0,
-                'spurious': 0
+                'spurious': 0,
+                'actual': 0,
+                'possible': 0,
+                'precision': 0.0,
+                'recall': 0.0,
             },
             'partial': {
                 'correct': 0,
                 'incorrect': 0,
                 'partial': 0,
                 'missed': 0,
-                'spurious': 0
+                'spurious': 0,
+                'actual': 0,
+                'possible': 0,
+                'precision': 0.0,
+                'recall': 0.0,
             },
             'exact': {
                 'correct': 0,
                 'incorrect': 0,
                 'partial': 0,
                 'missed': 0,
-                'spurious': 0
+                'spurious': 0,
+                'actual': 0,
+                'possible': 0,
+                'precision': 0.0,
+                'recall': 0.0,
             }
         }
     }
 
-    assert results_agg["PER"] == expected_agg["PER"]
+    assert results_agg['PER']['strict'] == expected_agg['PER']['strict']
+    assert results_agg['PER']['ent_type'] == expected_agg['PER']['ent_type']
+    assert results_agg['PER']['partial'] == expected_agg['PER']['partial']
+    assert results_agg['PER']['exact'] == expected_agg['PER']['exact']
+
     assert results_agg["LOC"] == expected_agg["LOC"]
 
 def test_find_overlap_no_overlap():
