@@ -21,8 +21,9 @@ class Evaluator():
 
         self.true = true
         self.pred = pred
-
         self.labels = labels
+
+        # Setup dict into which metrics will be stored.
 
         self.metrics_results = {
             'correct': 0,
@@ -35,6 +36,8 @@ class Evaluator():
             'precision': 0,
             'recall': 0,
         }
+
+        # Copy results dict to cover the four schemes.
 
         self.results = {
             'strict': deepcopy(self.metrics_results),
@@ -59,12 +62,12 @@ class Evaluator():
 
             # Check that the length of the true and predicted examples are the
             # same. This must be checked here, because another error may not
-            # be thrown if the lengths do not match
+            # be thrown if the lengths do not match.
 
             if len(true_ents) != len(pred_ents):
                 raise ValueError("Prediction length does not match true example length")
 
-            # compute results for one message
+            # Compute results for one message
 
             tmp_results, tmp_agg_results = compute_metrics(
                 collect_named_entities(true_ents),
