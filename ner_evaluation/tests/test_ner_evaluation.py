@@ -5,6 +5,7 @@ from ner_evaluation.ner_eval import find_overlap
 from ner_evaluation.ner_eval import compute_actual_possible
 from ner_evaluation.ner_eval import compute_precision_recall
 from ner_evaluation.ner_eval import compute_precision_recall_wrapper
+from ner_evaluation.ner_eval import get_tags
 
 
 def test_collect_named_entities_same_type_in_sequence():
@@ -907,3 +908,16 @@ def test_compute_precision_recall():
 
     assert out == expected
 
+
+def test_get_tags():
+
+    sents = [[
+        'B-PER', 'I-PER', 'O', 'O', 'B-ORG', 
+        'I-ORG', 'I-ORG', 'I-ORG', 'O', 'O',
+    ]]
+
+    expected = set(['PER', 'ORG'])
+
+    out = get_tags(sents)
+
+    assert out == expected

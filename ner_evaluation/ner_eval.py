@@ -449,3 +449,28 @@ def compute_precision_recall_wrapper(results):
     results = {**results_a, **results_b}
 
     return results
+
+
+def get_tags(sents):
+    """
+    Extract a list of tags from sentences.
+    """
+
+    tags = []
+
+    for sent in sents:
+        for tag in sent:
+            try:
+                # Expect that tags of entities will be in the format B-PER, etc.
+                # So split on the "-".
+
+                if "-" in tag:
+                    tag = tag.split("-")[1]
+                    tags.append(tag)
+            except:
+                pass
+
+    tags = set(tags)
+
+    return tags
+
