@@ -175,11 +175,15 @@ def compute_metrics(true_named_entities, pred_named_entities, tags):
     true_which_overlapped_with_pred = []
 
     # Subset into only the tags that we are interested in.
-    # NOTE: we only subset the true entities. Incorrect predicted entities now
-    # become spurious, (and may be spurious) so we should not subset them.
+    # NOTE: we remove the tags we don't want from both the predicted and the
+    # true entities. This covers the two cases where mismatches can occur:
+    #
+    # 1) Where the model predicts a tag that is not present in the true data
+    # 2) Where there is a tag in the true data that the model is not capable of
+    # predicting.
 
-    true_named_entities = [ent for ent in true_named_entities if ent.e_type in target_tags_no_schema]
     true_named_entities = [ent for ent in true_named_entities if ent.e_type in tags]
+    pred_named_entities = [ent for ent in pred_named_entities if ent.e_type in tags]
 
     # go through each predicted named-entity
 

@@ -75,8 +75,6 @@ def test_evaluator_simple_case_filtered_tags():
     """
     Check that tags can be exluded by passing the tags argument
 
-    Note that this will create spurious values if there are predictions of that
-    class in the predicted data.
     """
 
     true = [
@@ -101,10 +99,10 @@ def test_evaluator_simple_case_filtered_tags():
             'incorrect': 0,
             'partial': 0,
             'missed': 0,
-            'spurious': 1,
+            'spurious': 0,
             'possible': 3,
-            'actual': 4,
-            'precision': 0.75,
+            'actual': 3,
+            'precision': 1.0,
             'recall': 1.0
         },
         'ent_type': {
@@ -112,10 +110,10 @@ def test_evaluator_simple_case_filtered_tags():
             'incorrect': 0,
             'partial': 0,
             'missed': 0,
-            'spurious': 1,
+            'spurious': 0,
             'possible': 3,
-            'actual': 4,
-            'precision': 0.75,
+            'actual': 3,
+            'precision': 1.0,
             'recall': 1.0
         },
         'partial': {
@@ -123,10 +121,10 @@ def test_evaluator_simple_case_filtered_tags():
             'incorrect': 0,
             'partial': 0,
             'missed': 0,
-            'spurious': 1,
+            'spurious': 0,
             'possible': 3,
-            'actual': 4,
-            'precision': 0.75,
+            'actual': 3,
+            'precision': 1.0,
             'recall': 1.0
         },
         'exact': {
@@ -134,10 +132,10 @@ def test_evaluator_simple_case_filtered_tags():
             'incorrect': 0,
             'partial': 0,
             'missed': 0,
-            'spurious': 1,
+            'spurious': 0,
             'possible': 3,
-            'actual': 4,
-            'precision': 0.75,
+            'actual': 3,
+            'precision': 1.0,
             'recall': 1.0
         }
     }
