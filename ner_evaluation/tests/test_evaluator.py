@@ -15,7 +15,7 @@ def test_evaluator_simple_case():
         ['O', 'B-LOC', 'I-LOC', 'B-LOC', 'I-LOC', 'O'],
     ]
 
-    evaluator = Evaluator(true, pred, labels=['LOC', 'PER'])
+    evaluator = Evaluator(true, pred, tags=['LOC', 'PER'])
 
     results, results_agg = evaluator.evaluate()
 
@@ -71,9 +71,9 @@ def test_evaluator_simple_case():
     assert results['partial'] == expected['partial']
     assert results['exact'] == expected['exact']
 
-def test_evaluator_simple_case_filtered_labels():
+def test_evaluator_simple_case_filtered_tags():
     """
-    Check that labels can be exluded by passing the labels argument
+    Check that tags can be exluded by passing the tags argument
 
     Note that this will create spurious values if there are predictions of that
     class in the predicted data.
@@ -91,7 +91,7 @@ def test_evaluator_simple_case_filtered_labels():
         ['O', 'B-MISC', 'I-MISC', 'O', 'O', 'O'],
     ]
 
-    evaluator = Evaluator(true, pred, labels=['PER', 'LOC'])
+    evaluator = Evaluator(true, pred, tags=['PER', 'LOC'])
 
     results, results_agg = evaluator.evaluate()
 
@@ -161,7 +161,7 @@ def test_evaluator_extra_classes():
         ['O', 'B-FOO', 'I-FOO', 'I-FOO', 'O', 'O'],
     ]
 
-    evaluator = Evaluator(true, pred, labels=['ORG', 'FOO'])
+    evaluator = Evaluator(true, pred, tags=['ORG', 'FOO'])
 
     results, results_agg = evaluator.evaluate()
 
@@ -230,7 +230,7 @@ def test_evaluator_no_entities_in_prediction():
         ['O', 'O', 'O', 'O', 'O', 'O'],
     ]
 
-    evaluator = Evaluator(true, pred, labels=['PER'])
+    evaluator = Evaluator(true, pred, tags=['PER'])
 
     results, results_agg = evaluator.evaluate()
 
@@ -299,7 +299,7 @@ def test_evaluator_compare_results_and_results_agg():
         ['O', 'O', 'B-PER', 'I-PER', 'O', 'O'],
     ]
 
-    evaluator = Evaluator(true, pred, labels=['PER'])
+    evaluator = Evaluator(true, pred, tags=['PER'])
 
     results, results_agg = evaluator.evaluate()
 
@@ -431,7 +431,7 @@ def test_evaluator_compare_results_and_results_agg_1():
         ['O', 'O', 'B-MISC', 'I-MISC', 'O', 'O'],
     ]
 
-    evaluator = Evaluator(true, pred, labels=['PER', 'ORG', 'MISC'])
+    evaluator = Evaluator(true, pred, tags=['PER', 'ORG', 'MISC'])
 
     results, results_agg = evaluator.evaluate()
 
@@ -602,7 +602,7 @@ def test_evaluator_wrong_prediction_length():
         ['O', 'B-MISC', 'I-MISC', 'O'],
     ]
 
-    evaluator = Evaluator(true, pred, labels=['PER', 'MISC'])
+    evaluator = Evaluator(true, pred, tags=['PER', 'MISC'])
 
     with pytest.raises(ValueError):
         evaluator.evaluate()
@@ -619,5 +619,5 @@ def test_evaluator_non_matching_corpus_length():
     ]
 
     with pytest.raises(ValueError):
-        evaluator = Evaluator(true, pred, labels=['PER', 'MISC'])
+        evaluator = Evaluator(true, pred, tags=['PER', 'MISC'])
 

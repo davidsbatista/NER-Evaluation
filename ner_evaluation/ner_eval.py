@@ -12,7 +12,7 @@ Entity = namedtuple("Entity", "e_type start_offset end_offset")
 
 class Evaluator():
 
-    def __init__(self, true, pred, labels):
+    def __init__(self, true, pred, tags):
         """
         """
 
@@ -21,7 +21,7 @@ class Evaluator():
 
         self.true = true
         self.pred = pred
-        self.labels = labels
+        self.tags = tags
 
         # Setup dict into which metrics will be stored.
 
@@ -48,7 +48,7 @@ class Evaluator():
 
         # Create an accumulator to store results
 
-        self.evaluation_agg_entities_type = {e: deepcopy(self.results) for e in labels}
+        self.evaluation_agg_entities_type = {e: deepcopy(self.results) for e in tags}
 
 
     def evaluate(self):
@@ -72,7 +72,7 @@ class Evaluator():
             tmp_results, tmp_agg_results = compute_metrics(
                 collect_named_entities(true_ents),
                 collect_named_entities(pred_ents),
-                self.labels
+                self.tags
             )
 
             # Cycle through each result and accumulate
@@ -91,7 +91,7 @@ class Evaluator():
 
             # Aggregate results by entity type
 
-            for e_type in self.labels:
+            for e_type in self.tags:
 
                 for eval_schema in tmp_agg_results[e_type]:
 
@@ -111,7 +111,7 @@ def collect_named_entities(tokens):
     Creates a list of Entity named-tuples, storing the entity type and the start and end
     offsets of the entity.
 
-    :param tokens: a list of labels
+    :param tokens: a list of tags
     :return: a list of Entity named-tuples
     """
 
@@ -152,7 +152,7 @@ def collect_named_entities(tokens):
     return named_entities
 
 
-def compute_metrics(true_named_entities, pred_named_entities, target_tags_no_schema):
+def compute_metrics(true_named_entities, pred_named_entities, tags):
 
 
     eval_metrics = {'correct': 0, 'incorrect': 0, 'partial': 0, 'missed': 0, 'spurious': 0, 'precision': 0, 'recall': 0}
@@ -168,7 +168,7 @@ def compute_metrics(true_named_entities, pred_named_entities, target_tags_no_sch
 
     # results by entity type
 
-    evaluation_agg_entities_type = {e: deepcopy(evaluation) for e in target_tags_no_schema}
+    evaluation_agg_entities_type = {e: deepcopy(evaluation) for e in tags}
 
     # keep track of entities that overlapped
 
@@ -179,6 +179,7 @@ def compute_metrics(true_named_entities, pred_named_entities, target_tags_no_sch
     # become spurious, (and may be spurious) so we should not subset them.
 
     true_named_entities = [ent for ent in true_named_entities if ent.e_type in target_tags_no_schema]
+    true_named_entities = [ent for ent in true_named_entities if ent.e_type in tags]
 
     # go through each predicted named-entity
 
@@ -302,14 +303,14 @@ def compute_metrics(true_named_entities, pred_named_entities, target_tags_no_sch
 
                 # Aggregated by entity type results
 
-                # NOTE: when pred.e_type is not found in target_tags_no_schema
+                # NOTE: when pred.e_type is not found in tags
                 # or when it simply does not appear in the test set, then it is
                 # spurious, but it is not clear where to assign it at the tag
                 # level. In this case, it is applied to all target_tags
                 # found in this example. This will mean that the sum of the
                 # evaluation_agg_entities will not equal evaluation.
 
-                for true in target_tags_no_schema:                    
+                for true in tags:                    
 
                     evaluation_agg_entities_type[true]['strict']['spurious'] += 1
                     evaluation_agg_entities_type[true]['ent_type']['spurious'] += 1
