@@ -146,7 +146,7 @@ def collect_named_entities(tokens):
 
     # catches an entity that goes up until the last token
 
-    if ent_type and start_offset and end_offset is None:
+    if ent_type is not None and start_offset is not None and end_offset is None:
         named_entities.append(Entity(ent_type, start_offset, len(tokens)-1))
 
     return named_entities
