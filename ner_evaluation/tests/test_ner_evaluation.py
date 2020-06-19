@@ -23,6 +23,13 @@ def test_collect_named_entities_entity_goes_until_last_token():
     assert result == expected
 
 
+def test_collect_named_entities_sequence_has_only_one_entity():
+    tags = ['B-LOC', 'I-LOC', 'I-LOC']
+    result = collect_named_entities(tags)
+    expected = [Entity(e_type='LOC', start_offset=0, end_offset=2)]
+    assert result == expected
+
+
 def test_collect_named_entities_no_entity():
     tags = ['O', 'O', 'O', 'O', 'O']
     result = collect_named_entities(tags)
