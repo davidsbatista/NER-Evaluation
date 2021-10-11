@@ -1,4 +1,4 @@
-sklearn
+scikit-learn==0.23.2
 nltk
 sklearn_crfsuite
 pytest
