@@ -313,13 +313,18 @@ def compute_metrics(true_named_entities, pred_named_entities, tags):
                 # level. In this case, it is applied to all target_tags
                 # found in this example. This will mean that the sum of the
                 # evaluation_agg_entities will not equal evaluation.
-
-                for true in tags:                    
-
-                    evaluation_agg_entities_type[true]['strict']['spurious'] += 1
-                    evaluation_agg_entities_type[true]['ent_type']['spurious'] += 1
-                    evaluation_agg_entities_type[true]['partial']['spurious'] += 1
-                    evaluation_agg_entities_type[true]['exact']['spurious'] += 1
+                
+                if pred.e_type not in tags:
+                    for true in tags:      
+                        evaluation_agg_entities_type[true]['strict']['spurious'] += 1
+                        evaluation_agg_entities_type[true]['ent_type']['spurious'] += 1
+                        evaluation_agg_entities_type[true]['partial']['spurious'] += 1
+                        evaluation_agg_entities_type[true]['exact']['spurious'] += 1
+                else:
+                    evaluation_agg_entities_type[pred.e_type]['strict']['spurious'] += 1
+                    evaluation_agg_entities_type[pred.e_type]['ent_type']['spurious'] += 1
+                    evaluation_agg_entities_type[pred.e_type]['partial']['spurious'] += 1
+                    evaluation_agg_entities_type[pred.e_type]['exact']['spurious'] += 1
 
     # Scenario III: Entity was missed entirely.
 
